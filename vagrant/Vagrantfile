@@ -1,0 +1,32 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+##### THIS COULD POTENTIALLY BE USED IF WE WANT TO RUN TEMP DOCKER CONTAINERS ==========
+##### REALLY FAST ==========
+
+Vagrant.configure("2") do |config|
+
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+  config.vm.box = "bento/centos-7.5"
+
+  config.vm.network :forwarded_port, guest: 8080, host: 8090
+  config.vm.synced_folder ".", "/dvs-dpc", type:"nfs"
+  config.vm.network "private_network", ip: "33.33.33.10", type: "dhcp", auto_config: true
+
+  config.vm.provision "shell", inline: <<-SHELL
+     sudo yum -y update
+     curl -sL https://rpm.nodesource.com/setup_10.x | sudo bash -
+     sudo yum -y install nodejs git docker
+     
+     # sudo yum -y install centos-release-openshift-origin311 docker
+
+     
+
+
+  SHELL
+  
+end
